@@ -236,6 +236,11 @@
                                                     <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium {{ $argument->type === 'support' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-rose-50 text-rose-700 dark:bg-rose-950 dark:text-rose-300' }}">
                                                         {{ $argument->type === 'support' ? 'Pro' : 'Contra' }}
                                                     </span>
+                                                    @if ($argument->author)
+                                                        <p class="mt-2 text-xs text-zinc-500">
+                                                            {{ $argument->author->name }} · Reputation {{ $argument->author->reputationScore() }}
+                                                        </p>
+                                                    @endif
                                                     <p class="mt-2 text-sm text-zinc-700 dark:text-zinc-200">{{ $argument->body }}</p>
                                                     @if ($argument->averageQualityScore() !== null)
                                                         <p class="mt-2 text-sm font-medium text-zinc-600 dark:text-zinc-300">
