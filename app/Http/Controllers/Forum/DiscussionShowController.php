@@ -14,6 +14,8 @@ class DiscussionShowController extends Controller
             'discussion' => $discussion->load([
                 'topic.parent',
                 'author',
+                'positions.claims.evidence',
+                'positions.claims.arguments.evidence',
                 'positions.claims.arguments.children',
             ]),
             'replies' => $discussion->replies()

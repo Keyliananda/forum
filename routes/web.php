@@ -1,10 +1,13 @@
 <?php
 
 use App\Http\Controllers\Forum\DiscussionShowController;
+use App\Http\Controllers\Forum\StoreArgumentEvidenceController;
 use App\Http\Controllers\Forum\StoreArgumentRebuttalController;
 use App\Http\Controllers\Forum\StoreClaimArgumentController;
+use App\Http\Controllers\Forum\StoreClaimEvidenceController;
 use App\Http\Controllers\Forum\StoreDiscussionController;
 use App\Http\Controllers\Forum\StoreDiscussionReplyController;
+use App\Http\Controllers\Forum\StoreEvidenceVerificationController;
 use App\Http\Controllers\Forum\StorePositionClaimController;
 use App\Http\Controllers\Forum\StorePositionController;
 use App\Http\Controllers\Forum\TopicIndexController;
@@ -25,6 +28,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('positions/{position}/claims', StorePositionClaimController::class)->name('forum.positions.claims.store');
     Route::post('claims/{claim}/arguments', StoreClaimArgumentController::class)->name('forum.claims.arguments.store');
     Route::post('arguments/{argument}/rebuttals', StoreArgumentRebuttalController::class)->name('forum.arguments.rebuttals.store');
+    Route::post('claims/{claim}/evidence', StoreClaimEvidenceController::class)->name('forum.claims.evidence.store');
+    Route::post('arguments/{argument}/evidence', StoreArgumentEvidenceController::class)->name('forum.arguments.evidence.store');
+    Route::post('evidence/{evidence}/verifications', StoreEvidenceVerificationController::class)->name('forum.evidence.verifications.store');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

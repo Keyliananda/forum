@@ -118,6 +118,14 @@ class Discussion extends Model
         return $this->hasMany(Argument::class)->oldest();
     }
 
+    /**
+     * @return HasMany<Evidence, $this>
+     */
+    public function evidence(): HasMany
+    {
+        return $this->hasMany(Evidence::class)->oldest();
+    }
+
     public function isOpen(): bool
     {
         return $this->status === 'open' && $this->locked_at === null;

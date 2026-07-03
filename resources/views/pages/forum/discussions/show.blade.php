@@ -21,6 +21,21 @@
                 @endif
             </header>
 
+            @php
+                $evidenceStatusLabels = [
+                    'unverified' => 'ungeprüft',
+                    'reachable' => 'erreichbar',
+                    'verified' => 'verifiziert',
+                    'partially_verified' => 'teilweise verifiziert',
+                    'misquoted' => 'problematisch zitiert',
+                    'irrelevant' => 'irrelevant',
+                    'inaccessible' => 'nicht erreichbar',
+                    'contradicted' => 'widersprochen',
+                    'disputed' => 'umstritten',
+                    'outdated' => 'veraltet',
+                ];
+            @endphp
+
             <section class="space-y-4">
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
@@ -100,6 +115,89 @@
                                         <span class="inline-flex rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">Claim</span>
                                         <p class="mt-2 font-medium text-zinc-950 dark:text-white">{{ $claim->statement }}</p>
 
+                                        <details class="mt-3 rounded-md border border-zinc-200 p-3 dark:border-zinc-800" open>
+                                            <summary class="cursor-pointer text-sm font-medium text-zinc-700 dark:text-zinc-200">
+                                                Quellen ({{ $claim->evidence->count() }})
+                                            </summary>
+
+                                            <div class="mt-3 space-y-3">
+                                                @forelse ($claim->evidence as $evidence)
+                                                    <div class="rounded-md bg-zinc-50 p-3 dark:bg-zinc-950">
+                                                        <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                                                            <div>
+                                                                <a href="{{ $evidence->url }}" class="font-medium text-zinc-950 underline-offset-4 hover:underline dark:text-white" target="_blank" rel="noreferrer">
+                                                                    {{ $evidence->title }}
+                                                                </a>
+                                                                @if ($evidence->publisher)
+                                                                    <p class="mt-1 text-xs text-zinc-500">{{ $evidence->publisher }}</p>
+                                                                @endif
+                                                            </div>
+                                                            <span class="shrink-0 rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+                                                                {{ $evidenceStatusLabels[$evidence->verification_status] ?? $evidence->verification_status }}
+                                                            </span>
+                                                        </div>
+                                                        @if ($evidence->excerpt)
+                                                            <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-300">{{ $evidence->excerpt }}</p>
+                                                        @endif
+
+                                                        @auth
+                                                            @if ($discussion->isOpen())
+                                                                <form method="POST" action="{{ route('forum.evidence.verifications.store', $evidence) }}" class="mt-3 flex flex-col gap-2 sm:flex-row">
+                                                                    @csrf
+                                                                    <select name="status" class="rounded-md border-zinc-300 bg-white text-sm dark:border-zinc-700 dark:bg-zinc-950">
+                                                                        <option value="verified">verifiziert</option>
+                                                                        <option value="partially_verified">teilweise verifiziert</option>
+                                                                        <option value="misquoted">problematisch zitiert</option>
+                                                                        <option value="irrelevant">irrelevant</option>
+                                                                        <option value="inaccessible">nicht erreichbar</option>
+                                                                        <option value="contradicted">widersprochen</option>
+                                                                        <option value="disputed">umstritten</option>
+                                                                        <option value="outdated">veraltet</option>
+                                                                    </select>
+                                                                    <input name="note" placeholder="Notiz" class="min-w-0 flex-1 rounded-md border-zinc-300 bg-white text-sm dark:border-zinc-700 dark:bg-zinc-950">
+                                                                    <button class="rounded-md border border-zinc-300 px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800">
+                                                                        Prüfen
+                                                                    </button>
+                                                                </form>
+                                                            @endif
+                                                        @endauth
+                                                    </div>
+                                                @empty
+                                                    <p class="text-sm text-zinc-500">Noch keine Quellen für diesen Claim.</p>
+                                                @endforelse
+                                            </div>
+
+                                            @auth
+                                                @if ($discussion->isOpen())
+                                                    <form method="POST" action="{{ route('forum.claims.evidence.store', $claim) }}" class="mt-4 space-y-3 border-t border-zinc-200 pt-3 dark:border-zinc-800">
+                                                        @csrf
+                                                        <div class="grid gap-3 md:grid-cols-2">
+                                                            <div>
+                                                                <label for="claim_evidence_url_{{ $claim->id }}" class="text-sm font-medium text-zinc-700 dark:text-zinc-200">Quellen-URL</label>
+                                                                <input id="claim_evidence_url_{{ $claim->id }}" name="url" class="mt-1 w-full rounded-md border-zinc-300 bg-white text-sm dark:border-zinc-700 dark:bg-zinc-950">
+                                                            </div>
+                                                            <div>
+                                                                <label for="claim_evidence_title_{{ $claim->id }}" class="text-sm font-medium text-zinc-700 dark:text-zinc-200">Titel</label>
+                                                                <input id="claim_evidence_title_{{ $claim->id }}" name="title" class="mt-1 w-full rounded-md border-zinc-300 bg-white text-sm dark:border-zinc-700 dark:bg-zinc-950" required>
+                                                            </div>
+                                                        </div>
+                                                        <input name="publisher" placeholder="Publisher" class="w-full rounded-md border-zinc-300 bg-white text-sm dark:border-zinc-700 dark:bg-zinc-950">
+                                                        <textarea name="excerpt" rows="2" placeholder="Bezug zum Claim" class="w-full rounded-md border-zinc-300 bg-white text-sm dark:border-zinc-700 dark:bg-zinc-950"></textarea>
+                                                        <select name="stance" class="rounded-md border-zinc-300 bg-white text-sm dark:border-zinc-700 dark:bg-zinc-950">
+                                                            <option value="supports">stützt</option>
+                                                            <option value="contradicts">widerspricht</option>
+                                                            <option value="contextualizes">ordnet ein</option>
+                                                        </select>
+                                                        <button class="rounded-md bg-zinc-950 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200">
+                                                            Quelle speichern
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            @else
+                                                <p class="mt-3 text-sm text-zinc-500">Anmelden, um eine Quelle zu ergänzen.</p>
+                                            @endauth
+                                        </details>
+
                                         @auth
                                             @if ($discussion->isOpen())
                                                 <details class="mt-3 rounded-md border border-zinc-200 p-3 dark:border-zinc-800">
@@ -133,6 +231,24 @@
                                                         {{ $argument->type === 'support' ? 'Pro' : 'Contra' }}
                                                     </span>
                                                     <p class="mt-2 text-sm text-zinc-700 dark:text-zinc-200">{{ $argument->body }}</p>
+
+                                                    @if ($argument->evidence->isNotEmpty())
+                                                        <div class="mt-3 space-y-2">
+                                                            <h4 class="text-sm font-medium text-zinc-700 dark:text-zinc-200">Quellen</h4>
+                                                            @foreach ($argument->evidence as $evidence)
+                                                                <div class="rounded-md bg-zinc-50 p-3 dark:bg-zinc-950">
+                                                                    <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                                                                        <a href="{{ $evidence->url }}" class="text-sm font-medium text-zinc-950 underline-offset-4 hover:underline dark:text-white" target="_blank" rel="noreferrer">
+                                                                            {{ $evidence->title }}
+                                                                        </a>
+                                                                        <span class="shrink-0 rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+                                                                            {{ $evidenceStatusLabels[$evidence->verification_status] ?? $evidence->verification_status }}
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    @endif
 
                                                     @foreach ($argument->children as $child)
                                                         <div class="mt-3 border-l-2 border-rose-200 pl-3 dark:border-rose-900">
