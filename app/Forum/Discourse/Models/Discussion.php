@@ -127,6 +127,14 @@ class Discussion extends Model
         return $this->hasMany(Evidence::class)->oldest();
     }
 
+    /**
+     * @return HasMany<DiscussionResultSnapshot, $this>
+     */
+    public function resultSnapshots(): HasMany
+    {
+        return $this->hasMany(DiscussionResultSnapshot::class)->latest('computed_at');
+    }
+
     public function isOpen(): bool
     {
         return $this->status === 'open' && $this->locked_at === null;

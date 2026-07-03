@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Forum\DiscussionShowController;
+use App\Http\Controllers\Forum\RecomputeDiscussionResultController;
 use App\Http\Controllers\Forum\StoreArgumentEvidenceController;
 use App\Http\Controllers\Forum\StoreArgumentModerationActionController;
 use App\Http\Controllers\Forum\StoreArgumentQualityVoteController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\Forum\StoreDiscussionReportController;
 use App\Http\Controllers\Forum\StoreEvidenceVerificationController;
 use App\Http\Controllers\Forum\StorePositionClaimController;
 use App\Http\Controllers\Forum\StorePositionController;
+use App\Http\Controllers\Forum\StoreResultProfileController;
 use App\Http\Controllers\Forum\TopicIndexController;
 use App\Http\Controllers\Forum\TopicShowController;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +27,7 @@ Route::get('topics/{topic:path}', TopicShowController::class)
     ->where('topic', '.*')
     ->name('forum.topics.show');
 Route::get('discussions/{discussion:slug}', DiscussionShowController::class)->name('forum.discussions.show');
+Route::post('discussions/{discussion:slug}/results/recompute', RecomputeDiscussionResultController::class)->name('forum.discussions.results.recompute');
 
 Route::middleware(['auth'])->group(function () {
     Route::post('discussions', StoreDiscussionController::class)->name('forum.discussions.store');
@@ -41,6 +44,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('claims/{claim}/evidence', StoreClaimEvidenceController::class)->name('forum.claims.evidence.store');
     Route::post('arguments/{argument}/evidence', StoreArgumentEvidenceController::class)->name('forum.arguments.evidence.store');
     Route::post('evidence/{evidence}/verifications', StoreEvidenceVerificationController::class)->name('forum.evidence.verifications.store');
+    Route::post('result-profiles', StoreResultProfileController::class)->name('forum.result-profiles.store');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

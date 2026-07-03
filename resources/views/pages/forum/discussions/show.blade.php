@@ -21,6 +21,26 @@
                 @endif
             </header>
 
+            @if ($discussion->resultSnapshots->isNotEmpty())
+                @php
+                    $snapshot = $discussion->resultSnapshots->first();
+                @endphp
+                <section class="rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
+                    <div>
+                        <h2 class="text-xl font-semibold text-zinc-950 dark:text-white">Ergebnis</h2>
+                        <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-300">Profil {{ $snapshot->profile_key }}</p>
+                    </div>
+                    <div class="mt-4 space-y-2">
+                        @foreach ($snapshot->position_scores as $positionScore)
+                            <div class="flex items-center justify-between gap-4 rounded-md bg-zinc-50 px-3 py-2 text-sm dark:bg-zinc-950">
+                                <span class="font-medium text-zinc-950 dark:text-white">{{ $positionScore['title'] }}</span>
+                                <span class="text-zinc-600 dark:text-zinc-300">{{ $positionScore['score'] }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </section>
+            @endif
+
             @php
                 $evidenceStatusLabels = [
                     'unverified' => 'ungeprüft',

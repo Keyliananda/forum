@@ -19,6 +19,7 @@ class DiscussionShowController extends Controller
                 'positions.claims.arguments.qualityVotes',
                 'positions.claims.arguments.author',
                 'positions.claims.arguments.children',
+                'resultSnapshots',
             ]),
             'replies' => $discussion->replies()
                 ->with(['author'])
