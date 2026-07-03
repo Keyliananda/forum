@@ -385,6 +385,10 @@
                         <dd>{{ $discussion->status === 'open' ? 'Offen' : 'Geschlossen' }}</dd>
                     </div>
                     <div class="flex justify-between gap-4">
+                        <dt>Governance</dt>
+                        <dd>{{ $discussion->governance_profile }}</dd>
+                    </div>
+                    <div class="flex justify-between gap-4">
                         <dt>Antworten</dt>
                         <dd>{{ $replies->count() }}</dd>
                     </div>

@@ -22,6 +22,7 @@ use Illuminate\Support\Str;
  * @property string $core_question
  * @property string|null $body
  * @property string $status
+ * @property string $governance_profile
  * @property Carbon|null $locked_at
  * @property Carbon|null $last_replied_at
  * @property Carbon|null $created_at

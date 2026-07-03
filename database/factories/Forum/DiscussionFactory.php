@@ -35,6 +35,7 @@ class DiscussionFactory extends Factory
             'core_question' => rtrim(fake()->sentence(8), '.').'?',
             'body' => fake()->paragraph(),
             'status' => 'open',
+            'governance_profile' => 'open_democratic',
             'locked_at' => null,
             'last_replied_at' => now(),
         ];
