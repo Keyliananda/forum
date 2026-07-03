@@ -102,6 +102,22 @@ class Discussion extends Model
         return $this->hasMany(DiscussionReply::class)->oldest();
     }
 
+    /**
+     * @return HasMany<Position, $this>
+     */
+    public function positions(): HasMany
+    {
+        return $this->hasMany(Position::class)->orderBy('sort_order')->oldest();
+    }
+
+    /**
+     * @return HasMany<Argument, $this>
+     */
+    public function arguments(): HasMany
+    {
+        return $this->hasMany(Argument::class)->oldest();
+    }
+
     public function isOpen(): bool
     {
         return $this->status === 'open' && $this->locked_at === null;
