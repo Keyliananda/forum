@@ -2,6 +2,7 @@
 
 namespace App\Forum\Discourse\Models;
 
+use App\Forum\Social\Models\ExternalSignal;
 use App\Models\User;
 use Database\Factories\Forum\DiscussionFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -133,6 +134,14 @@ class Discussion extends Model
     public function resultSnapshots(): HasMany
     {
         return $this->hasMany(DiscussionResultSnapshot::class)->latest('computed_at');
+    }
+
+    /**
+     * @return HasMany<ExternalSignal, $this>
+     */
+    public function externalSignals(): HasMany
+    {
+        return $this->hasMany(ExternalSignal::class)->latest('captured_at');
     }
 
     public function isOpen(): bool

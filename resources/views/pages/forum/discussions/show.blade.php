@@ -41,6 +41,20 @@
                 </section>
             @endif
 
+            @if ($discussion->externalSignals->isNotEmpty())
+                <section class="rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
+                    <h2 class="text-xl font-semibold text-zinc-950 dark:text-white">Externe Stimmung</h2>
+                    <div class="mt-4 space-y-2">
+                        @foreach ($discussion->externalSignals as $signal)
+                            <div class="flex flex-wrap items-center justify-between gap-3 rounded-md bg-zinc-50 px-3 py-2 text-sm dark:bg-zinc-950">
+                                <span class="font-medium text-zinc-950 dark:text-white">{{ $signal->label }}</span>
+                                <span class="text-zinc-600 dark:text-zinc-300">{{ $signal->up_count }} hoch · {{ $signal->down_count }} runter · {{ $signal->comment_count }} Kommentare</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </section>
+            @endif
+
             @php
                 $evidenceStatusLabels = [
                     'unverified' => 'ungeprüft',

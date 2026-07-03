@@ -20,6 +20,7 @@ class DiscussionShowController extends Controller
                 'positions.claims.arguments.author',
                 'positions.claims.arguments.children',
                 'resultSnapshots',
+                'externalSignals',
             ]),
             'replies' => $discussion->replies()
                 ->with(['author'])
