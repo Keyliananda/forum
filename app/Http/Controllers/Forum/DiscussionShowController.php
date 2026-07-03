@@ -16,6 +16,7 @@ class DiscussionShowController extends Controller
                 'author',
                 'positions.claims.evidence',
                 'positions.claims.arguments.evidence',
+                'positions.claims.arguments.qualityVotes',
                 'positions.claims.arguments.children',
             ]),
             'replies' => $discussion->replies()

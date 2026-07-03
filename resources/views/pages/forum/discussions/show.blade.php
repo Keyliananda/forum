@@ -114,6 +114,12 @@
                                     <div class="border-l-2 border-zinc-200 pl-4 dark:border-zinc-700">
                                         <span class="inline-flex rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">Claim</span>
                                         <p class="mt-2 font-medium text-zinc-950 dark:text-white">{{ $claim->statement }}</p>
+                                        <div class="mt-3 flex flex-wrap gap-2 text-xs">
+                                            <span class="rounded-full bg-zinc-100 px-2.5 py-1 font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">Robustheit</span>
+                                            <span class="rounded-full bg-emerald-50 px-2.5 py-1 font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">{{ $claim->arguments->where('type', 'support')->count() }} Pro</span>
+                                            <span class="rounded-full bg-rose-50 px-2.5 py-1 font-medium text-rose-700 dark:bg-rose-950 dark:text-rose-300">{{ $claim->arguments->where('type', 'oppose')->count() }} Contra</span>
+                                            <span class="rounded-full bg-zinc-100 px-2.5 py-1 font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">{{ $claim->evidence->where('verification_status', 'verified')->count() }} verifizierte Quelle</span>
+                                        </div>
 
                                         <details class="mt-3 rounded-md border border-zinc-200 p-3 dark:border-zinc-800" open>
                                             <summary class="cursor-pointer text-sm font-medium text-zinc-700 dark:text-zinc-200">
@@ -231,6 +237,11 @@
                                                         {{ $argument->type === 'support' ? 'Pro' : 'Contra' }}
                                                     </span>
                                                     <p class="mt-2 text-sm text-zinc-700 dark:text-zinc-200">{{ $argument->body }}</p>
+                                                    @if ($argument->averageQualityScore() !== null)
+                                                        <p class="mt-2 text-sm font-medium text-zinc-600 dark:text-zinc-300">
+                                                            Argumentqualität {{ number_format($argument->averageQualityScore(), 1) }}
+                                                        </p>
+                                                    @endif
 
                                                     @if ($argument->evidence->isNotEmpty())
                                                         <div class="mt-3 space-y-2">
@@ -259,6 +270,34 @@
 
                                                     @auth
                                                         @if ($discussion->isOpen())
+                                                            <details class="mt-3">
+                                                                <summary class="cursor-pointer text-sm font-medium text-zinc-600 dark:text-zinc-300">Argumentqualität bewerten</summary>
+                                                                <form method="POST" action="{{ route('forum.arguments.quality.store', $argument) }}" class="mt-3 grid gap-2 sm:grid-cols-3">
+                                                                    @csrf
+                                                                    @foreach ([
+                                                                        'clarity' => 'Klarheit',
+                                                                        'relevance' => 'Relevanz',
+                                                                        'logic' => 'Logik',
+                                                                        'source_usage' => 'Quellen',
+                                                                        'fairness' => 'Fairness',
+                                                                        'rebuttal_strength' => 'Entkräftung',
+                                                                    ] as $field => $label)
+                                                                        <label class="text-sm text-zinc-600 dark:text-zinc-300">
+                                                                            {{ $label }}
+                                                                            <select name="{{ $field }}" class="mt-1 w-full rounded-md border-zinc-300 bg-white text-sm dark:border-zinc-700 dark:bg-zinc-950">
+                                                                                @for ($score = 1; $score <= 5; $score++)
+                                                                                    <option value="{{ $score }}">{{ $score }}</option>
+                                                                                @endfor
+                                                                            </select>
+                                                                        </label>
+                                                                    @endforeach
+                                                                    <textarea name="note" rows="2" placeholder="Notiz" class="sm:col-span-3 rounded-md border-zinc-300 bg-white text-sm dark:border-zinc-700 dark:bg-zinc-950"></textarea>
+                                                                    <button class="sm:col-span-3 rounded-md border border-zinc-300 px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800">
+                                                                        Qualität speichern
+                                                                    </button>
+                                                                </form>
+                                                            </details>
+
                                                             <details class="mt-3">
                                                                 <summary class="cursor-pointer text-sm font-medium text-zinc-600 dark:text-zinc-300">Entkräftung hinzufügen</summary>
                                                                 <form method="POST" action="{{ route('forum.arguments.rebuttals.store', $argument) }}" class="mt-3 space-y-3">

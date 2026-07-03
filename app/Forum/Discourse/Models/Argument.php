@@ -94,4 +94,23 @@ class Argument extends Model
     {
         return $this->hasMany(Evidence::class)->oldest();
     }
+
+    /**
+     * @return HasMany<ArgumentQualityVote, $this>
+     */
+    public function qualityVotes(): HasMany
+    {
+        return $this->hasMany(ArgumentQualityVote::class);
+    }
+
+    public function averageQualityScore(): ?float
+    {
+        $votes = $this->qualityVotes;
+
+        if ($votes->isEmpty()) {
+            return null;
+        }
+
+        return round($votes->avg(fn (ArgumentQualityVote $vote): float => $vote->averageScore()), 1);
+    }
 }

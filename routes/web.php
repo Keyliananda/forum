@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Forum\DiscussionShowController;
 use App\Http\Controllers\Forum\StoreArgumentEvidenceController;
+use App\Http\Controllers\Forum\StoreArgumentQualityVoteController;
 use App\Http\Controllers\Forum\StoreArgumentRebuttalController;
 use App\Http\Controllers\Forum\StoreClaimArgumentController;
 use App\Http\Controllers\Forum\StoreClaimEvidenceController;
@@ -28,6 +29,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('positions/{position}/claims', StorePositionClaimController::class)->name('forum.positions.claims.store');
     Route::post('claims/{claim}/arguments', StoreClaimArgumentController::class)->name('forum.claims.arguments.store');
     Route::post('arguments/{argument}/rebuttals', StoreArgumentRebuttalController::class)->name('forum.arguments.rebuttals.store');
+    Route::post('arguments/{argument}/quality', StoreArgumentQualityVoteController::class)->name('forum.arguments.quality.store');
     Route::post('claims/{claim}/evidence', StoreClaimEvidenceController::class)->name('forum.claims.evidence.store');
     Route::post('arguments/{argument}/evidence', StoreArgumentEvidenceController::class)->name('forum.arguments.evidence.store');
     Route::post('evidence/{evidence}/verifications', StoreEvidenceVerificationController::class)->name('forum.evidence.verifications.store');
